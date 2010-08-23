@@ -168,6 +168,14 @@ object TimeOfDay {
  * This class represents a time of day, separate from any time zone considerations
  */
 class TimeOfDay(val hour : Int, val minute : Int, val second : Int, val millisecond : Int) extends Ordered[TimeOfDay]{
+  validate(hour, minute, second, millisecond)
+
+  private def validate(h : Int, m : Int, s : Int, ms : Int) {
+    require(h < 24, "Hour must be 0-23: " + h)
+    require(m < 59, "Minute must be 0-59: " + m)
+    require(s < 59, "Second must be 0-59: " + s)
+    require(ms < 999, "Millisecond must be 0-999: " + ms)
+  }
 
   def copy(h : Int = hour, m : Int = minute, s : Int = second, ms : Int = millisecond) = TimeOfDay(h, m, s, ms)
 
@@ -184,13 +192,22 @@ class TimeOfDay(val hour : Int, val minute : Int, val second : Int, val millisec
     cf
   }
 
-  def nextIn(zone : TimeZone = TimeZone.getDefault) : Instant = {
-
-    val now = Instant.systemTime
-    if (now.time(zone) > this)
-      (now.date(zone) + 1).toInstant(this)(zone)
+  /**
+   * Return the instant subsequent to the given instant in the given time zone
+   */
+  def nextAfter(i : Instant)(zone : TimeZone = TimeZone.getDefault) : Instant = {
+    val (d, t) = i.dateAndTime(zone)
+    (if (t > this)
+      (d + 1)
     else
-      (now.date(zone)).toInstant(this)(zone)
+      d).toInstant(this)(zone)
+  }
+
+  /**
+   *  Return the next instant at this time in the given time zone
+   */
+  def nextIn(zone : TimeZone = TimeZone.getDefault) : Instant = {
+    nextAfter(Instant.systemTime)(zone)
   }
 
   /**
