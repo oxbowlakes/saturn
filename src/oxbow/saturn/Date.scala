@@ -8,6 +8,10 @@ import java.util.{Formatter, Formattable, TimeZone, Date => JDate, Calendar => J
  */
 object DayOfWeek {
 
+  //GIT COMMENT TEST
+
+  
+
   def forJavaCalendarIndex(i : Int) = i match {
       case JCal.MONDAY    => Mon
       case JCal.TUESDAY   => Tue
