@@ -193,6 +193,21 @@ class TimeOfDay(val hour : Int, val minutes : Int, val seconds : Int, val millis
       (now.date(zone)).toInstant(this)(zone)
   }
 
+  /**
+   * Two times are equal if they have the same hour, minute, second and millisecond
+   */
+  def equal(o : Any) = o match {
+    case that : TimeOfDay => this.hour == that.hour && this.minute == that.minute && this.second == that.second && this.millisecond == that.millisecond
+    case _                 => false
+  }
+
+  def hashCode = {
+    var hash = (hour ##)
+    hash = (31 * hash) + (minute ##)
+    hash = (31 * hash) + (second ##)
+    hash = (31 * hash) + (millisecond ##)
+    hash
+  }
 
   override def toString = "%d:%d:%d.%-3d".format(hour, minutes, seconds, milliseconds)
 }

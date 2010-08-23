@@ -8,8 +8,6 @@ import java.util.{Formatter, Formattable, TimeZone, Date => JDate, Calendar => J
  */
 object DayOfWeek {
 
-  //GIT COMMENT TEST
-
   def forJavaCalendarIndex(i : Int) = i match {
       case JCal.MONDAY    => Mon
       case JCal.TUESDAY   => Tue
@@ -251,6 +249,9 @@ class Date(val year : Int, val month : Month, val day : Int) extends Ordered[Dat
 
   }
 
+  /**
+   * Two Dates are equal if they have the same year, month and day
+   */
   override def equals(o : Any) = o match {
     case other : Date => year == other.year && month == other.month && day == other.day
     case _            => false
