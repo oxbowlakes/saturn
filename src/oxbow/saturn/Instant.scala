@@ -167,18 +167,18 @@ object TimeOfDay {
 /**
  * This class represents a time of day, separate from any time zone considerations
  */
-class TimeOfDay(val hour : Int, val minutes : Int, val seconds : Int, val milliseconds : Int) extends Ordered[TimeOfDay]{
+class TimeOfDay(val hour : Int, val minute : Int, val second : Int, val millisecond : Int) extends Ordered[TimeOfDay]{
 
-  def copy(h : Int = hour, m : Int = minutes, s : Int = seconds, ms : Int = milliseconds) = TimeOfDay(h, m, s, ms)
+  def copy(h : Int = hour, m : Int = minute, s : Int = second, ms : Int = millisecond) = TimeOfDay(h, m, s, ms)
 
   def compare(that: TimeOfDay) = {
     var cf = hour compare that.hour
     if (cf == 0) {
-      cf = minutes compare that.minutes
+      cf = minute compare that.minute
       if (cf == 0) {
-        cf = seconds compare that.seconds
+        cf = second compare that.second
         if (cf == 0)
-          cf = milliseconds compare that.milliseconds
+          cf = millisecond compare that.millisecond
       }
     }
     cf
@@ -196,12 +196,12 @@ class TimeOfDay(val hour : Int, val minutes : Int, val seconds : Int, val millis
   /**
    * Two times are equal if they have the same hour, minute, second and millisecond
    */
-  def equal(o : Any) = o match {
+  override def equals(o : Any) = o match {
     case that : TimeOfDay => this.hour == that.hour && this.minute == that.minute && this.second == that.second && this.millisecond == that.millisecond
     case _                 => false
   }
 
-  def hashCode = {
+  override def hashCode = {
     var hash = (hour ##)
     hash = (31 * hash) + (minute ##)
     hash = (31 * hash) + (second ##)
@@ -209,5 +209,5 @@ class TimeOfDay(val hour : Int, val minutes : Int, val seconds : Int, val millis
     hash
   }
 
-  override def toString = "%d:%d:%d.%-3d".format(hour, minutes, seconds, milliseconds)
+  override def toString = "%d:%d:%d.%-3d".format(hour, minute, second, millisecond)
 }

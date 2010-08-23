@@ -187,9 +187,9 @@ class Date(val year : Int, val month : Month, val day : Int) extends Ordered[Dat
 
     //NOW ADD
     cal.set(JCal.HOUR_OF_DAY, time.hour)
-    cal.set(JCal.MINUTE, time.minutes)
-    cal.set(JCal.SECOND, time.seconds)
-    cal.set(JCal.MILLISECOND, time.milliseconds)
+    cal.set(JCal.MINUTE, time.minute)
+    cal.set(JCal.SECOND, time.second)
+    cal.set(JCal.MILLISECOND, time.millisecond)
     Instant(cal.getTimeInMillis)
   }
 
