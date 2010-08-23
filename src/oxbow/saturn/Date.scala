@@ -10,8 +10,6 @@ object DayOfWeek {
 
   //GIT COMMENT TEST
 
-  
-
   def forJavaCalendarIndex(i : Int) = i match {
       case JCal.MONDAY    => Mon
       case JCal.TUESDAY   => Tue

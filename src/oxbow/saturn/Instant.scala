@@ -4,6 +4,9 @@ import compat.Platform
 import java.util.concurrent.TimeUnit
 import java.util.{Formatter, Formattable, TimeZone}
 
+/**
+ * Companion of Instant - you can create an Instant via a Long constructor or from a Java Date directly.
+ */
 object Instant {
   def apply(l : Long) = new Instant(l)
   def systemTime = apply(Platform.currentTime)
@@ -19,18 +22,40 @@ object Instant {
     override def initialValue = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS z")
   }
 }
+
+/**
+ * An instant in time to millisecond precision using the standard epoch measurement (the same as java util Date and
+ * java util Calendar). The specific difference with this class is that it is only an instant in time - if you wish to
+ * view "date time fields", you must supply a time zone and a time of day
+ */
 @serializable
 @SerialVersionUID(1L)
 class Instant(val millis : Long) extends Ordered[Instant] with Formattable {
+  /**
+   * Return the delay to the supplied instant as a Long duration in the given unit
+   */
   def delayTo(other : Instant)(unit : TimeUnit) : Long = unit.convert(other.millis - millis, TimeUnit.MILLISECONDS)
 
+  /**
+   * Return the instant as calculated as this instant plus the given duration
+   */
   def +(duration : Long, unit : TimeUnit) : Instant = Instant(millis + TimeUnit.MILLISECONDS.convert(duration, unit))
+
+  /**
+   * Return the instant as calculated as this instant minus the given duration
+   */
   def -(duration : Long, unit : TimeUnit) : Instant = this.+(-duration, unit)
 
   def compare(that: Instant) = this.millis compare that.millis
 
+  /**
+   * Return the java Date instance representing the exact same epoch millis
+   */
   def toJavaDate = new java.util.Date(millis)
 
+  /**
+   * Return the Saturn Date for this instant in the specified time zone
+   */
   def date(zone : TimeZone = TimeZone.getDefault) : Date = {
     import java.util.{Calendar => JCal}
     val cal = JCal.getInstance(zone)
@@ -38,6 +63,19 @@ class Instant(val millis : Long) extends Ordered[Instant] with Formattable {
     Date(cal.get(JCal.YEAR), Month.forJavaCalendarMonthIndex(cal.get(JCal.MONTH)), cal.get(JCal.DAY_OF_MONTH))
   }
 
+  /**
+   * Return the saturn Date and TimeOfDay in the supplied time zone
+   */
+  def dateAndTime(zone : TimeZone = TimeZone.getDefault) : (Date, TimeOfDay) = {
+    import java.util.{Calendar => JCal}
+    val cal = JCal.getInstance(zone)
+    cal.setTimeInMillis(millis)
+    Date(cal.get(JCal.YEAR), Month.forJavaCalendarMonthIndex(cal.get(JCal.MONTH)), cal.get(JCal.DAY_OF_MONTH)) -> TimeOfDay(cal.get(JCal.HOUR_OF_DAY), cal.get(JCal.MINUTE), cal.get(JCal.SECOND), cal.get(JCal.MILLISECOND))
+
+  }
+  /**
+   * Return the Saturn time for this instant in the specified time zone
+   */
   def time(zone : TimeZone = TimeZone.getDefault) : TimeOfDay = {
     import java.util.{Calendar => JCal}
     val cal = JCal.getInstance(zone)
@@ -45,6 +83,9 @@ class Instant(val millis : Long) extends Ordered[Instant] with Formattable {
     TimeOfDay(cal.get(JCal.HOUR_OF_DAY), cal.get(JCal.MINUTE), cal.get(JCal.SECOND), cal.get(JCal.MILLISECOND))
   }
 
+  /**
+   * Return the day of week in the supplied time zone
+   */
   def dayOfWeek(zone : TimeZone = TimeZone.getDefault) : DayOfWeek = {
     import java.util.{Calendar => JCal}
     val cal = JCal.getInstance(zone)
@@ -52,6 +93,9 @@ class Instant(val millis : Long) extends Ordered[Instant] with Formattable {
     DayOfWeek.forJavaCalendarIndex(cal.get(JCal.DAY_OF_WEEK))
   }
 
+  /**
+   * Two instants are equal iff they represent the same epoch millis
+   */
   override def equals(o : Any) = o match {
     case that : Instant => this.millis == that.millis
     case _              => false
@@ -60,8 +104,15 @@ class Instant(val millis : Long) extends Ordered[Instant] with Formattable {
   override def hashCode = millis ##
 
   import Instant._
+
+  /**
+   * Return a 10-character string representation yyyy-MM-dd
+   */
   override def toString = UtcFormat.format(toJavaDate)
 
+  /**
+   * Return the standard 10-character string representation or the alternate form, the 8-character representation yyyyMMdd
+   */
   def formatTo(formatter: Formatter, flags: Int, width: Int, precision: Int) = {
     import java.util.FormattableFlags._
     val sb = new StringBuilder
@@ -113,6 +164,9 @@ object TimeOfDay {
   val Noon = TimeOfDay(12, 0)
 }
 
+/**
+ * This class represents a time of day, separate from any time zone considerations
+ */
 class TimeOfDay(val hour : Int, val minutes : Int, val seconds : Int, val milliseconds : Int) extends Ordered[TimeOfDay]{
 
   def copy(h : Int = hour, m : Int = minutes, s : Int = seconds, ms : Int = milliseconds) = TimeOfDay(h, m, s, ms)
@@ -130,7 +184,7 @@ class TimeOfDay(val hour : Int, val minutes : Int, val seconds : Int, val millis
     cf
   }
 
-  def next(zone : TimeZone = TimeZone.getDefault) : Instant = {
+  def nextIn(zone : TimeZone = TimeZone.getDefault) : Instant = {
 
     val now = Instant.systemTime
     if (now.time(zone) > this)
