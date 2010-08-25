@@ -1,0 +1,12 @@
+Saturn is a simple datetime library for Scala. It is not intended as a full-on
+replacement for either JODA or the JSR-310 javax.time libraries but merely as 
+an improvement on using java.util.Date/Calendar.
+
+You might be interested in using Saturn if you...
+
+ - Never use anything other than a standard, western Calendar
+ 
+ - Want a clean separation in your domain between datetime concepts
+   like Instant, Date, TimeOfDay etc.
+ 
+ - Find Joda over-complicated for your needs
