@@ -25,15 +25,16 @@ class DateFormat private(val inner : SimpleDateFormat) extends Format {
 
   def pattern = inner.toPattern
 
-  import util.control.Exception._
   def parse(str : String) : Either[ParseException, Date] = try { Right(parseObject(str).asInstanceOf[Date]) } catch { case p : ParseException => Left(p)}
 
   def parseObject(source: String, pos: ParsePosition) = {
-    import java.util.{Calendar => JC}
-    val d = inner.parse(source, pos)
-    val cal = JC.getInstance(Utc)
-    cal.setTime(d)
-    Date(cal.get(JC.YEAR), Month.forJavaCalendarMonthIndex(cal.get(JC.MONTH)), cal.get(JC.DAY_OF_MONTH))
+    import java.util.{Calendar => JC, Date => JD}
+    def from(d : JD) = {
+      val cal = JC.getInstance(Utc)
+      cal.setTime(d)
+      Date(cal.get(JC.YEAR), Month.forJavaCalendarMonthIndex(cal.get(JC.MONTH)), cal.get(JC.DAY_OF_MONTH))
+    }
+    Option(inner.parse(source, pos)).map(from(_)).orNull
   }
 
   def format(obj: AnyRef, toAppendTo: StringBuffer, pos: FieldPosition) = {
@@ -67,16 +68,18 @@ object TimeOfDayFormat extends Zoned {
 class TimeOfDayFormat private(val inner : SimpleDateFormat) extends Format {
   import TimeOfDayFormat._
 
-  import util.control.Exception._
   def parse(str : String) : Either[ParseException, TimeOfDay] = try { Right(parseObject(str).asInstanceOf[TimeOfDay]) } catch { case p : ParseException => Left(p)}
 
   def pattern = inner toPattern
   def parseObject(source: String, pos: ParsePosition) = {
-    import java.util.{Calendar => JC}
-    val d = inner.parse(source, pos)
-    val cal = JC.getInstance(Utc)
-    cal.setTime(d)
-    TimeOfDay(cal.get(JC.HOUR_OF_DAY), cal.get(JC.MINUTE), cal.get(JC.SECOND), cal.get(JC.MILLISECOND))
+    import java.util.{Calendar => JC, Date => JD}
+    def from(d : JD) = {
+      val cal = JC.getInstance(Utc)
+      cal.setTime(d)
+      TimeOfDay(cal.get(JC.HOUR_OF_DAY), cal.get(JC.MINUTE), cal.get(JC.SECOND), cal.get(JC.MILLISECOND))
+    }
+
+    Option(inner.parse(source, pos)).map(from(_)).orNull
   }
 
   def format(obj: AnyRef, toAppendTo: StringBuffer, pos: FieldPosition) = {
@@ -113,9 +116,7 @@ object InstantFormat {
 class InstantFormat private(val inner : SimpleDateFormat) extends Format {
   def pattern = inner toPattern
   def parseObject(source: String, pos: ParsePosition) = {
-    import java.util.{Calendar => JC}
-    val d = inner.parse(source, pos)
-    Instant(d.getTime)
+    Option(inner.parse(source, pos)).map(d => Instant(d.getTime)).orNull
   }
 
   def format(obj: AnyRef, toAppendTo: StringBuffer, pos: FieldPosition) = {
