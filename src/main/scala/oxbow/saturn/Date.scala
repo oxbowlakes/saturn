@@ -55,15 +55,16 @@ sealed trait Month extends Ordered[Month] {
 
   def compare(that: Month) = index compare that.index
 
-  private[saturn] def validate(day : Int, inLeapYear : Boolean) = {
-    require(day > 0, "Day must be a positive value: " +day)
-    val ndays = this match {
+  def lastDay(year : Int) : Int = this match {
       case Jan | Mar | May | Jul | Aug | Oct | Dec  => 31
       case Apr | Jun | Sep | Nov                    => 30
-      case Feb if inLeapYear                        => 29
+      case Feb if Date.isLeapYear(year)             => 29
       case Feb                                      => 28
     }
-    require(day <= ndays, "Day must be less than [%d] in %s".format(ndays, this))
+
+  private[saturn] def validate(day : Int, year : Int) = {
+    require(day > 0, "Day must be a positive value: " +day)
+    require(day <= lastDay(year), "Day must be less than [%d] in %s".format(lastDay(year), this))
   }
 }
 @serializable
@@ -152,6 +153,9 @@ object Month {
 
 
 object Date {
+  private[this] val formats = ("yyyy-MM-dd" :: "yyyyMMdd" :: "yyyy-MMM-dd" :: "yyyyMMMdd" :: "dd-MMM-yyyy" :: "ddMMMyyyy" :: Nil).map(DateFormat(_))
+  def parse(str : String) : Option[Date] = formats.view.map(f => f synchronized { f.parse(str) }).find(_.isRight).flatMap(_.right.toOption) 
+
   def apply(y : Int, m : Int, d : Int) : Date = new Date(y, Month.forIndex(m), d)
   def apply(y : Int, m : Month, d : Int) : Date = new Date(y, m, d)
   def systemDate(zone : TimeZone = TimeZone.getDefault) : Date = {
@@ -167,14 +171,13 @@ object Date {
 @serializable
 @SerialVersionUID(1L)
 class Date(val year : Int, val month : Month, val day : Int) extends Ordered[Date] with Formattable {
-
   validate(year, month, day)
 
   def copy(y : Int = year, m : Month = month, d : Int = day) = Date(y, m, d)
 
   private def validate(year : Int, month : Month, day : Int) = {
     require(year >= 0, "Year must be positive: " + year)
-    month.validate(day, Date.isLeapYear(year))
+    month.validate(day, year)
   }
 
   def toJavaDate(time : TimeOfDay)(zone : TimeZone = TimeZone.getDefault) = toInstant(time)(zone).toJavaDate
@@ -207,6 +210,9 @@ class Date(val year : Int, val month : Month, val day : Int) extends Ordered[Dat
     import Date._
     Date(cal.get(JCal.YEAR), Month.forJavaCalendarMonthIndex(cal.get(JCal.MONTH)), cal.get(JCal.DAY_OF_MONTH))
   }
+
+  def >>(a : Adjuster) = adjust(a) 
+  def adjust(a : Adjuster) : Date = a adjust this
 
   def minus(days : Int) = plus(-days)
 

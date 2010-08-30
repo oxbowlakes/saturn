@@ -136,6 +136,11 @@ class Instant(val millis : Long) extends Ordered[Instant] with Formattable {
 }
 
 object TimeOfDay {
+
+  private[this] val formats = ("HH:mm:ss.SSS" :: "HH:mm:ss" :: "HH:mm" :: Nil).map(TimeOfDayFormat(_))
+
+  def parse(str : String) : Option[TimeOfDay] = formats.view.map(f => f synchronized { f.parse(str) }).find(_.isRight).flatMap(_.right.toOption)
+
   object Meridian extends Enumeration{
     val Am, Pm = Value
   }
