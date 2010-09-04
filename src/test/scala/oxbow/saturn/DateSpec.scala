@@ -76,4 +76,50 @@ class DateSpec extends Specification {
     (Date(2010, 9, 4) + 7) must_== Date(2010, 9, 11)
     (Date(2010, 9, 5) - 7) must_== Date(2010, 8, 29)
   }
+  
+  "copy works with defaults" in {
+    (Date(2010, 4, 10) copy (y=2011)) must_== Date(2011, 4 ,10)
+    (Date(2010, 4, 10) copy (y=2011, m=May)) must_== Date(2011, 5 ,10)
+    (Date(2010, 4, 10) copy (y=2011, m=May, d=12)) must_== Date(2011, 5 ,12)
+  }
+
+  "throws IllegalArgumentException with nonsensical info" in {
+    Date(2010, -1, 1) must throwA[IllegalArgumentException]
+    Date(2010, 1, -1) must throwA[IllegalArgumentException]
+    Date(2010, 0, 1) must throwA[IllegalArgumentException]
+    Date(2010, 1, 0) must throwA[IllegalArgumentException]
+    Date(2010, 1, 32) must throwA[IllegalArgumentException]
+    Date(2010, 2, 29) must throwA[IllegalArgumentException]
+    Date(2008, 2, 30) must throwA[IllegalArgumentException]
+    Date(2008, 3, 32) must throwA[IllegalArgumentException]
+    Date(2008, 4, 31) must throwA[IllegalArgumentException]
+    Date(2008, 5, 32) must throwA[IllegalArgumentException]
+    Date(2008, 6, 31) must throwA[IllegalArgumentException]
+    Date(2008, 7, 32) must throwA[IllegalArgumentException]
+    Date(2008, 8, 32) must throwA[IllegalArgumentException]
+    Date(2008, 9, 31) must throwA[IllegalArgumentException]
+    Date(2008, 10, 32) must throwA[IllegalArgumentException]
+    Date(2008, 11, 31) must throwA[IllegalArgumentException]
+    Date(2008, 12, 32) must throwA[IllegalArgumentException]
+    Date(2008, 13, 1) must throwA[IllegalArgumentException]
+  }
+
+  "last day of month is correct in" {
+    (Jan lastDay 2010) mustBe 31
+    (Feb lastDay 2010) mustBe 28
+    (Feb lastDay 2008) mustBe 29
+    (Feb lastDay 2000) mustBe 29
+    (Feb lastDay 1900) mustBe 28
+    (Mar lastDay 2008) mustBe 31
+    (Apr lastDay 2008) mustBe 30
+    (May lastDay 2008) mustBe 31
+    (Jun lastDay 2008) mustBe 30
+    (Jul lastDay 2008) mustBe 31
+    (Aug lastDay 2008) mustBe 31
+    (Sep lastDay 2008) mustBe 30
+    (Oct lastDay 2008) mustBe 31
+    (Nov lastDay 2008) mustBe 30
+    (Dec lastDay 2008) mustBe 31
+    5 //WTF? why do I need this here?
+  }
 }
