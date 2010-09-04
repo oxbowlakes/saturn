@@ -231,5 +231,5 @@ class TimeOfDay(val hour : Int, val minute : Int, val second : Int, val millisec
     hash
   }
 
-  override def toString = "%d:%d:%d.%-3d".format(hour, minute, second, millisecond)
+  override def toString = "%02d:%02d:%02d.%03d".format(hour, minute, second, millisecond)
 }
