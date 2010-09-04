@@ -25,6 +25,8 @@ class DateFormat private(val inner : SimpleDateFormat) extends Format {
 
   def pattern = inner.toPattern
 
+  override def toString = "DateFormat[%s]" format pattern
+
   def parse(str : String) : Either[ParseException, Date] = try { Right(parseObject(str).asInstanceOf[Date]) } catch { case p : ParseException => Left(p)}
 
   def parseObject(source: String, pos: ParsePosition) = {
@@ -57,10 +59,17 @@ class DateFormat private(val inner : SimpleDateFormat) extends Format {
     case that : DateFormat => this.inner == that.inner
     case _                 => false
   }
+
+
 }
 
 object TimeOfDayFormat extends Zoned {
-  def apply(pattern: String) = new TimeOfDayFormat(new SimpleDateFormat(pattern))
+  private[this] def newInner(pattern : String) = {
+    val f = new SimpleDateFormat(pattern)
+    f.setTimeZone(Utc)
+    f
+  }
+  def apply(pattern: String) = new TimeOfDayFormat(newInner(pattern))
 }
 
 @serializable
@@ -70,6 +79,7 @@ class TimeOfDayFormat private(val inner : SimpleDateFormat) extends Format {
 
   def parse(str : String) : Either[ParseException, TimeOfDay] = try { Right(parseObject(str).asInstanceOf[TimeOfDay]) } catch { case p : ParseException => Left(p)}
 
+  override def toString = "TimeOfDayFormat[%s]" format pattern
   def pattern = inner toPattern
   def parseObject(source: String, pos: ParsePosition) = {
     import java.util.{Calendar => JC, Date => JD}
@@ -115,6 +125,7 @@ object InstantFormat {
 @SerialVersionUID(1L)
 class InstantFormat private(val inner : SimpleDateFormat) extends Format {
   def pattern = inner toPattern
+  override def toString = "InstantFormat[%s]" format pattern
   def parseObject(source: String, pos: ParsePosition) = {
     Option(inner.parse(source, pos)).map(d => Instant(d.getTime)).orNull
   }

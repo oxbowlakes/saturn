@@ -133,6 +133,7 @@ object Month {
     case 10 => Oct
     case 11 => Nov
     case 12 => Dec
+    case _ => throw new IllegalArgumentException("Bad month index [%d]. Must be 1-12".format(i))
   }
 
   def monthIndex(month : Month) = month match {
@@ -227,7 +228,7 @@ class Date(val year : Int, val month : Month, val day : Int) extends Ordered[Dat
     cf
   }
 
-  private[this] def dayOfWeek = {
+  def dayOfWeek = {
     val cal = JCal.getInstance
     cal.set(JCal.YEAR, year)
     cal.set(JCal.MONTH, Month.javaCalendarMonthIndex(month))
