@@ -54,6 +54,15 @@ sealed trait Month extends Ordered[Month] {
   def index = monthIndex(this)
 
   def compare(that: Month) = index compare that.index
+  def next = this match {
+    case Dec => Jan
+    case _   => Month.forIndex(index + 1)
+  }
+  
+  def prev = this match {
+   case Jan => Dec
+   case _   => Month.forIndex(index - 1)
+  }
 
   def lastDay(year : Int) : Int = this match {
       case Jan | Mar | May | Jul | Aug | Oct | Dec  => 31
@@ -119,6 +128,7 @@ object Month {
   def javaCalendarMonthIndex(month : Month) : Int = monthIndex(month) - 1
 
   def forJavaCalendarMonthIndex(i : Int) = forIndex(i + 1)
+
 
   def forIndex(i : Int) = i match {
     case 1 => Jan

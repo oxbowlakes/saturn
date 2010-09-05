@@ -122,4 +122,33 @@ class DateSpec extends Specification {
     (Dec lastDay 2008) mustBe 31
     5 //WTF? why do I need this here?
   }
+
+  "month next works" in {
+    Jan.next must_== Feb
+    Feb.next must_== Mar
+    Mar.next must_== Apr
+    Apr.next must_== May
+    May.next must_== Jun
+    Jun.next must_== Jul
+    Jul.next must_== Aug
+    Aug.next must_== Sep
+    Sep.next must_== Oct
+    Oct.next must_== Nov
+    Nov.next must_== Dec
+    Dec.next must_== Jan
+  }
+  "month prev works" in {
+    Jan.prev must_== Dec
+    Feb.prev must_== Jan
+    Mar.prev must_== Feb
+    Apr.prev must_== Mar
+    May.prev must_== Apr
+    Jun.prev must_== May
+    Jul.prev must_== Jun
+    Aug.prev must_== Jul
+    Sep.prev must_== Aug
+    Oct.prev must_== Sep
+    Nov.prev must_== Oct
+    Dec.prev must_== Nov
+  }
 }
