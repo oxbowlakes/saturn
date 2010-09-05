@@ -176,10 +176,10 @@ class TimeOfDay(val hour : Int, val minute : Int, val second : Int, val millisec
   validate(hour, minute, second, millisecond)
 
   private def validate(h : Int, m : Int, s : Int, ms : Int) {
-    require(h < 24, "Hour must be 0-23: " + h)
-    require(m < 59, "Minute must be 0-59: " + m)
-    require(s < 59, "Second must be 0-59: " + s)
-    require(ms < 999, "Millisecond must be 0-999: " + ms)
+    require(h < 24 && h >= 0, "Hour must be 0-23: " + h)
+    require(m >= 0 && m < 60, "Minute must be 0-59: " + m)
+    require(s >= 0 && s < 60, "Second must be 0-59: " + s)
+    require(ms >= 0 && ms < 1000, "Millisecond must be 0-999: " + ms)
   }
 
   def copy(h : Int = hour, m : Int = minute, s : Int = second, ms : Int = millisecond) = TimeOfDay(h, m, s, ms)
