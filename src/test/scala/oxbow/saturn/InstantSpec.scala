@@ -15,18 +15,18 @@ class InstantSpec extends Specification {
   }
 
   "timeofday should follow equality" in {
-    TimeOfDay(12, 23, 34, 678) == TimeOfDay(12, 23, 34, 678) should beTrue
-    TimeOfDay(12, 23, 34, 678) == TimeOfDay(12, 23, 34, 679) should beFalse
-    TimeOfDay(12, 23, 34, 678) == TimeOfDay(12, 23, 33, 678) should beFalse
-    TimeOfDay(12, 23, 34, 678) == TimeOfDay(12, 22, 34, 678) should beFalse
-    TimeOfDay(12, 23, 34, 678) == TimeOfDay(11, 23, 34, 678) should beFalse
+    TimeOfDay(12, 23, 34, 678) == TimeOfDay(12, 23, 34, 678) must beTrue
+    TimeOfDay(12, 23, 34, 678) == TimeOfDay(12, 23, 34, 679) must beFalse
+    TimeOfDay(12, 23, 34, 678) == TimeOfDay(12, 23, 33, 678) must beFalse
+    TimeOfDay(12, 23, 34, 678) == TimeOfDay(12, 22, 34, 678) must beFalse
+    TimeOfDay(12, 23, 34, 678) == TimeOfDay(11, 23, 34, 678) must beFalse
   }
 
   "timeofday should be ordered" in {
-    (TimeOfDay(12, 23, 34, 678) < TimeOfDay(12, 23, 34, 679)) should beTrue
-    (TimeOfDay(12, 23, 33, 678) < TimeOfDay(12, 23, 34, 678)) should beTrue
-    (TimeOfDay(12, 22, 33, 678) < TimeOfDay(12, 23, 34, 678)) should beTrue
-    (TimeOfDay(11, 22, 33, 678) < TimeOfDay(12, 23, 34, 678)) should beTrue
+    (TimeOfDay(12, 23, 34, 678) < TimeOfDay(12, 23, 34, 679)) must beTrue
+    (TimeOfDay(12, 23, 33, 678) < TimeOfDay(12, 23, 34, 678)) must beTrue
+    (TimeOfDay(12, 22, 33, 678) < TimeOfDay(12, 23, 34, 678)) must beTrue
+    (TimeOfDay(11, 22, 33, 678) < TimeOfDay(12, 23, 34, 678)) must beTrue
   }
 
   "timeofday should be valid" in {

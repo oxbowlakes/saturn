@@ -32,11 +32,11 @@ class AdjustersSpec extends Specification {
     (Date(2010, Sep, 4) >> ToThu(Prev)) must_== Date(2010, Sep, 2)
     (Date(2010, Sep, 4) >> ToFri(Next)) must_== Date(2010, Sep, 10)
     (Date(2010, Sep, 4) >> ToFri(Prev)) must_== Date(2010, Sep, 3)
-    (Date(2010, Sep, 4) >> ToSat(Next)) must_== Date(2010, Sep, 11)
+    (Date(2010, Sep, 4) >> ToSat(Next)) must_== Date(2010, Sep, 4)
     (Date(2010, Sep, 4) >> ToSat(Prev)) must_== Date(2010, Sep, 4)
-    (Date(2010, Sep, 5) >> ToSun(Next)) must_== Date(2010, Sep, 5)
-    (Date(2010, Sep, 5) >> ToSun(Prev)) must_== Date(2010, Sep, 5)
-    (Date(2010, Sep, 6) >> ToSun(Next)) must_== Date(2010, Sep, 12)
-    (Date(2010, Sep, 6) >> ToSun(Prev)) must_== Date(2010, Sep, 5)
+    (Date(2010, Sep, 4) >> ToSun(Next)) must_== Date(2010, Sep, 5)
+    (Date(2010, Sep, 4) >> ToSun(Prev)) must_== Date(2010, Aug, 29)
+    (Date(2010, Sep, 6) >> ToSat(Next)) must_== Date(2010, Sep, 11)
+    (Date(2010, Sep, 6) >> ToSat(Prev)) must_== Date(2010, Sep, 4)
   }
 }
